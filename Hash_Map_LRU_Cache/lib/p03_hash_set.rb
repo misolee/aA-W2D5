@@ -10,24 +10,24 @@ class HashSet
     resize! if @count + 1 > num_buckets
 
     value = key.hash
-    unless @store[bucket_num(value)].include?(value)
+    unless self.include?(key)
       @count += 1
-      @store[bucket_num(value)] << [key, value]
+      @store[bucket_num(value)] << key
     end
   end
 
   def include?(key)
     value = key.hash
     @store[bucket_num(value)].each do |el|
-      return true if el == [key, value]
+      return true if el == key
     end
     false
   end
 
   def remove(key)
     value = key.hash
-    if @store[bucket_num(value)].include?([key, value])
-      @store[bucket_num(value)].delete([key, value])
+    if self.include?(key)
+      @store[bucket_num(value)].delete(key)
       @count -= 1
     end
   end
@@ -50,8 +50,9 @@ class HashSet
     old_store = @store
     @store = Array.new(num_buckets * 2) {Array.new}
     old_store.each do |bucket|
-      bucket.each do |key, value|
-        @store[bucket_num(value)] << [key, value]
+      bucket.each do |key|
+        value = key.hash
+        @store[bucket_num(value)] << key
       end
     end
   end
